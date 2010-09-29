@@ -20,7 +20,8 @@ mainloop ()
          puts ("Configure");
          break;
       case MapRequest:
-         puts ("Map");
+         printf ("Map %08x\n", e.xmaprequest.window);
+         XMapRaised (Dpy, e.xmaprequest.window);
          break;
       default:
          puts ("e");
