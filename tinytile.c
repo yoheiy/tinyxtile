@@ -1,4 +1,5 @@
 #include <X11/Xlib.h>
+#include <stdio.h>
 Display *Dpy;
 Screen   Scr;
 Window   Root;
@@ -11,7 +12,19 @@ mainloop ()
    XSelectInput (Dpy, Root, SubstructureRedirectMask);
    for (;;) {
       XNextEvent (Dpy, &e);
-      puts ("e");
+      switch (e.type) {
+      case CirculateRequest:
+         puts ("Circulate");
+         break;
+      case ConfigureRequest:
+         puts ("Configure");
+         break;
+      case MapRequest:
+         puts ("Map");
+         break;
+      default:
+         puts ("e");
+      }
    }
 }
 
