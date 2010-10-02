@@ -3,15 +3,41 @@
 Display *Dpy;
 Window   Root;
 int      Scr;
+unsigned int w, h;
+
+void
+listwindow ()
+{
+   Window r_root, r_parent, *r_ch;
+   int n_ch;
+   XWindowAttributes wattr;
+
+   if (XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch)) {
+      int i, j = 0, k = 0;
+      for (i = 0; i < n_ch; i++) {
+         XGetWindowAttributes (Dpy, r_ch[i], &wattr);
+         if (wattr.map_state == IsViewable &&
+             wattr.override_redirect == False)
+            printf ("%03d %08x\n", j++, r_ch[i]);
+      }
+      for (i = 0; i < n_ch; i++) {
+         XGetWindowAttributes (Dpy, r_ch[i], &wattr);
+         if (wattr.map_state == IsViewable &&
+             wattr.override_redirect == False)
+            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * ++k, w, h / j);
+      }
+      XFree (r_ch);
+   }
+}
 
 void
 mainloop ()
 {
    XEvent e;
    Window wn;
-   unsigned int w, h;
 
-   XSelectInput (Dpy, Root, SubstructureRedirectMask);
+   XSelectInput (Dpy, Root, SubstructureRedirectMask |
+                            SubstructureNotifyMask);
    for (;;) {
       XNextEvent (Dpy, &e);
       switch (e.type) {
@@ -24,10 +50,14 @@ mainloop ()
       case MapRequest:
          wn = e.xmaprequest.window;
          printf ("Map %08x\n", wn);
-         w = DisplayWidth (Dpy, Scr) / 2;
-         h = DisplayHeight (Dpy, Scr);
+         listwindow ();
          XMoveResizeWindow (Dpy, wn, 0, 0, w, h);
          XMapRaised (Dpy, wn);
+         break;
+      case UnmapNotify:
+         wn = e.xmaprequest.window;
+         printf ("Unmap %08x\n", wn);
+         listwindow ();
          break;
       default:
          puts ("e");
@@ -42,6 +72,8 @@ main ()
    if (!Dpy) return 1;
    Scr = DefaultScreen (Dpy);
    Root = DefaultRootWindow (Dpy);
+         w = DisplayWidth (Dpy, Scr) / 2;
+         h = DisplayHeight (Dpy, Scr);
    mainloop ();
    XCloseDisplay (Dpy);
    return 0;
