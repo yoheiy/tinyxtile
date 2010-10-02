@@ -20,16 +20,19 @@ listwindow (Window master)
              wattr.override_redirect == False)
             printf ("%03d %08x\n", j++, r_ch[i]);
       }
-      if (!master) {
-         master = *r_ch;
-         j--;
-      }
+      if (!master) { j--; }
       for (i = 0; i < n_ch; i++) {
          XGetWindowAttributes (Dpy, r_ch[i], &wattr);
          if (wattr.map_state == IsViewable &&
-             wattr.override_redirect == False &&
-             r_ch[i] != master)
-            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * ++k, w, h / j);
+             wattr.override_redirect == False)
+         {
+            k++;
+            if (k > j) {
+               master = r_ch[i];
+               break;
+            }
+            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k, w, h / j);
+         }
       }
       XMoveResizeWindow (Dpy, master, 0, 0, w, h);
       XFree (r_ch);
