@@ -31,10 +31,10 @@ listwindow (Window master)
                master = r_ch[i];
                break;
             }
-            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k, w, h / j);
+            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k, w, h / j - 1);
          }
       }
-      XMoveResizeWindow (Dpy, master, 0, 0, w, h);
+      XMoveResizeWindow (Dpy, master, 0, 0, w - 1, h);
       XFree (r_ch);
    }
 }
