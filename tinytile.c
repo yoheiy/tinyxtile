@@ -6,7 +6,7 @@ int      Scr;
 unsigned int w, h;
 
 void
-listwindow ()
+listwindow (Window master)
 {
    Window r_root, r_parent, *r_ch;
    int n_ch;
@@ -20,12 +20,18 @@ listwindow ()
              wattr.override_redirect == False)
             printf ("%03d %08x\n", j++, r_ch[i]);
       }
+      if (!master) {
+         master = *r_ch;
+         j--;
+      }
       for (i = 0; i < n_ch; i++) {
          XGetWindowAttributes (Dpy, r_ch[i], &wattr);
          if (wattr.map_state == IsViewable &&
-             wattr.override_redirect == False)
+             wattr.override_redirect == False &&
+             r_ch[i] != master)
             XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * ++k, w, h / j);
       }
+      XMoveResizeWindow (Dpy, master, 0, 0, w, h);
       XFree (r_ch);
    }
 }
@@ -50,14 +56,13 @@ mainloop ()
       case MapRequest:
          wn = e.xmaprequest.window;
          printf ("Map %08x\n", wn);
-         listwindow ();
-         XMoveResizeWindow (Dpy, wn, 0, 0, w, h);
+         listwindow (wn);
          XMapRaised (Dpy, wn);
          break;
       case UnmapNotify:
          wn = e.xmaprequest.window;
          printf ("Unmap %08x\n", wn);
-         listwindow ();
+         listwindow (0);
          break;
       default:
          puts ("e");
