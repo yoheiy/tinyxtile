@@ -82,6 +82,7 @@ main ()
    Root = DefaultRootWindow (Dpy);
          w = DisplayWidth (Dpy, Scr) / 2;
          h = DisplayHeight (Dpy, Scr);
+   listwindow (0);
    mainloop ();
    XCloseDisplay (Dpy);
    return 0;
