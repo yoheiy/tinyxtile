@@ -13,7 +13,7 @@ listwindow (Window master)
    XWindowAttributes wattr;
 
    if (XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch)) {
-      int i, j = 0, k = 0;
+      int i, j = 0, k = 0, b;
       for (i = 0; i < n_ch; i++) {
          XGetWindowAttributes (Dpy, r_ch[i], &wattr);
          if (wattr.map_state == IsViewable &&
@@ -31,10 +31,14 @@ listwindow (Window master)
                master = r_ch[i];
                break;
             }
-            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k, w, h / j - 1);
+            b = wattr.border_width;
+            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k,
+                  w - 2 * b, h / j - 2 * b - 1);
          }
       }
-      XMoveResizeWindow (Dpy, master, 0, 0, w - 1, h);
+      XGetWindowAttributes (Dpy, r_ch[i], &wattr);
+      b = wattr.border_width;
+      XMoveResizeWindow (Dpy, master, 0, 0, w - 2 * b - 1, h - 2 * b);
       XFree (r_ch);
    }
 }
