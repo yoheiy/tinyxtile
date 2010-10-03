@@ -1,4 +1,4 @@
-all: tinytile
+all: tinytile xnobar
 
-tinytile: tinytile.c
+%: %.c
 	$(CC) -o $@ $< -lX11
