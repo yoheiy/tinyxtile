@@ -5,6 +5,10 @@ Window   Root;
 int      Scr;
 unsigned int w, h;
 
+/* configuration */
+const int gap = 1;
+const int barh = 16;
+
 void
 listwindow (Window master)
 {
@@ -32,13 +36,14 @@ listwindow (Window master)
                break;
             }
             b = wattr.border_width;
-            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k,
+            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k + barh,
                   w - 2 * b, h / j - 2 * b - 1);
          }
       }
       XGetWindowAttributes (Dpy, r_ch[i], &wattr);
       b = wattr.border_width;
-      XMoveResizeWindow (Dpy, master, 0, 0, w - 2 * b - 1, h - 2 * b);
+      XMoveResizeWindow (Dpy, master, 0, barh, w - 2 * b - gap,
+                                               h - 2 * b);
       XFree (r_ch);
    }
 }
@@ -82,7 +87,7 @@ main ()
    Scr = DefaultScreen (Dpy);
    Root = DefaultRootWindow (Dpy);
          w = DisplayWidth (Dpy, Scr) / 2;
-         h = DisplayHeight (Dpy, Scr);
+         h = DisplayHeight (Dpy, Scr) - barh;
    listwindow (0);
    mainloop ();
    XCloseDisplay (Dpy);
