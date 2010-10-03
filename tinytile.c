@@ -8,6 +8,7 @@ unsigned int w, h;
 /* configuration */
 const int gap = 1;
 const int barh = 16;
+const int topbar = 1;
 
 void
 listwindow (Window master)
@@ -36,14 +37,15 @@ listwindow (Window master)
                break;
             }
             b = wattr.border_width;
-            XMoveResizeWindow (Dpy, r_ch[i], w, h - h / j * k + barh,
+            XMoveResizeWindow (Dpy, r_ch[i],
+                  w, h - h / j * k + topbar * barh,
                   w - 2 * b, h / j - 2 * b - 1);
          }
       }
       XGetWindowAttributes (Dpy, r_ch[i], &wattr);
       b = wattr.border_width;
-      XMoveResizeWindow (Dpy, master, 0, barh, w - 2 * b - gap,
-                                               h - 2 * b);
+      XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
+                                                        h - 2 * b);
       XFree (r_ch);
    }
 }
