@@ -54,7 +54,21 @@ mainloop ()
          puts ("Circulate");
          break;
       case ConfigureRequest:
-         puts ("Configure");
+         wn = e.xconfigurerequest.window;
+         printf ("Configure %08x\n", wn);
+         printf (" vmask : %08x\n StackMode = %08x\n",
+                 e.xconfigurerequest.value_mask, CWStackMode);
+         printf (" above : %08x\n",
+                 e.xconfigurerequest.above);
+         printf (" detail : %08x\n Above = %08x\n TopIf = %08x\n",
+                 e.xconfigurerequest.detail, Above, TopIf);
+         if (e.xconfigurerequest.value_mask & CWStackMode)
+            if (!e.xconfigurerequest.above)
+               if (e.xconfigurerequest.detail == Above) {
+                  XRaiseWindow (Dpy, e.xconfigurerequest.window);
+                  puts ("Raise");
+               }
+         listwindow (0);
          break;
       case MapRequest:
          wn = e.xmaprequest.window;
