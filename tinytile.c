@@ -18,7 +18,7 @@ listwindow (Window master)
          XGetWindowAttributes (Dpy, r_ch[i], &wattr);
          if (wattr.map_state == IsViewable &&
              wattr.override_redirect == False)
-            printf ("%03d %08x\n", j++, r_ch[i]);
+            j++;
       }
       if (!master) { j--; }
       for (i = 0; i < n_ch; i++) {
@@ -54,39 +54,22 @@ mainloop ()
    for (;;) {
       XNextEvent (Dpy, &e);
       switch (e.type) {
-      case CirculateRequest:
-         puts ("Circulate");
-         break;
       case ConfigureRequest:
          wn = e.xconfigurerequest.window;
-         printf ("Configure %08x\n", wn);
-         printf (" vmask : %08x\n StackMode = %08x\n",
-                 e.xconfigurerequest.value_mask, CWStackMode);
-         printf (" above : %08x\n",
-                 e.xconfigurerequest.above);
-         printf (" detail : %08x\n Above = %08x\n TopIf = %08x\n",
-                 e.xconfigurerequest.detail, Above, TopIf);
          if (e.xconfigurerequest.value_mask & CWStackMode)
             if (!e.xconfigurerequest.above)
-               if (e.xconfigurerequest.detail == Above) {
+               if (e.xconfigurerequest.detail == Above)
                   XRaiseWindow (Dpy, e.xconfigurerequest.window);
-                  puts ("Raise");
-               }
          listwindow (0);
          break;
       case MapRequest:
          wn = e.xmaprequest.window;
-         printf ("Map %08x\n", wn);
          listwindow (wn);
          XMapRaised (Dpy, wn);
          break;
       case UnmapNotify:
-         wn = e.xmaprequest.window;
-         printf ("Unmap %08x\n", wn);
          listwindow (0);
          break;
-      default:
-         puts ("e");
       }
    }
 }
