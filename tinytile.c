@@ -38,8 +38,8 @@ listwindow (Window master)
             }
             b = wattr.border_width;
             XMoveResizeWindow (Dpy, r_ch[i],
-                  w, h - h / j * k + topbar * barh,
-                  w - 2 * b, h / j - 2 * b - 1);
+                  w, h - (h + gap) / j * k + topbar * barh + gap,
+                  w - 2 * b, (h + gap) / j - 2 * b - gap);
          }
       }
       XGetWindowAttributes (Dpy, r_ch[i], &wattr);
