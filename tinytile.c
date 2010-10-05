@@ -82,6 +82,12 @@ mainloop ()
 }
 
 int
+xerror (Display *dpy, XErrorEvent *e)
+{
+   return 0;
+}
+
+int
 main ()
 {
    Dpy = XOpenDisplay (NULL);
@@ -90,6 +96,7 @@ main ()
    Root = DefaultRootWindow (Dpy);
          w = DisplayWidth (Dpy, Scr) / 2;
          h = DisplayHeight (Dpy, Scr) - barh;
+   XSetErrorHandler (xerror);
    listwindow (0);
    mainloop ();
    XCloseDisplay (Dpy);
