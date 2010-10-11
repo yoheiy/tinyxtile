@@ -42,7 +42,7 @@ listwindow (Window master)
                   w - 2 * b, (h + gap) / j - 2 * b - gap);
          }
       }
-      XGetWindowAttributes (Dpy, r_ch[i], &wattr);
+      XGetWindowAttributes (Dpy, master, &wattr);
       b = wattr.border_width;
       XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
                                                         h - 2 * b);
