@@ -63,11 +63,14 @@ mainloop ()
       switch (e.type) {
       case ConfigureRequest:
          wn = e.xconfigurerequest.window;
-         if (e.xconfigurerequest.value_mask & CWStackMode)
-            if (!e.xconfigurerequest.above)
-               if (e.xconfigurerequest.detail == Above)
-                  XRaiseWindow (Dpy, e.xconfigurerequest.window);
-         listwindow (0);
+         if ((e.xconfigurerequest.value_mask & CWStackMode) &&
+             (!e.xconfigurerequest.above) &&
+             (e.xconfigurerequest.detail == Above)) {
+            XRaiseWindow (Dpy, wn);
+            listwindow (0);
+         } else if (e.xconfigurerequest.value_mask & CWWidth) {
+            XResizeWindow (Dpy, wn, e.xconfigurerequest.width, h);
+         }
          break;
       case MapRequest:
          wn = e.xmaprequest.window;
