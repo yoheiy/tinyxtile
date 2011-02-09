@@ -44,7 +44,7 @@ newwindow (Window wn)
 }
 
 void
-listwindow (Window master)
+listwindow ()
 {
    Window r_root, r_parent, *r_ch;
    unsigned int n_ch, i;
@@ -57,11 +57,6 @@ listwindow (Window master)
       newwindow (r_ch[i]);
 
    XFree (r_ch);
-
-   if (master)
-      newwindow (master);
-
-   arrange ();
 }
 
 void
@@ -81,19 +76,23 @@ mainloop ()
              (!e.xconfigurerequest.above) &&
              (e.xconfigurerequest.detail == Above)) {
             XRaiseWindow (Dpy, wn);
-            listwindow (0);
+            listwindow ();
+            arrange ();
          } else if (e.xconfigurerequest.value_mask & CWWidth) {
             w = e.xconfigurerequest.width;
-	    arrange (0);
+            arrange ();
          }
          break;
       case MapRequest:
          wn = e.xmaprequest.window;
-         listwindow (wn);
+         listwindow ();
+         newwindow (wn);
+         arrange ();
          XMapRaised (Dpy, wn);
          break;
       case UnmapNotify:
-         listwindow (0);
+         listwindow ();
+         arrange ();
          break;
       }
    }
@@ -116,7 +115,8 @@ main ()
          w = s / 2;
          h = DisplayHeight (Dpy, Scr) - barh;
    XSetErrorHandler (xerror);
-   listwindow (0);
+   listwindow ();
+   arrange ();
    mainloop ();
    XCloseDisplay (Dpy);
    return 0;
