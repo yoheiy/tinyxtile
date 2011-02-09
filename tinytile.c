@@ -3,7 +3,7 @@
 Display *Dpy;
 Window   Root;
 int      Scr;
-unsigned int w, h;
+unsigned int w, h, s;
 
 /* configuration */
 const int gap = 1;
@@ -39,7 +39,7 @@ listwindow (Window master)
             b = wattr.border_width;
             XMoveResizeWindow (Dpy, r_ch[i],
                   w, h - (h + gap) / j * k + topbar * barh + gap,
-                  w - 2 * b, (h + gap) / j - 2 * b - gap);
+                  s - w - 2 * b, (h + gap) / j - 2 * b - gap);
          }
       }
       XGetWindowAttributes (Dpy, master, &wattr);
@@ -69,7 +69,8 @@ mainloop ()
             XRaiseWindow (Dpy, wn);
             listwindow (0);
          } else if (e.xconfigurerequest.value_mask & CWWidth) {
-            XResizeWindow (Dpy, wn, e.xconfigurerequest.width, h);
+            w = e.xconfigurerequest.width;
+	    listwindow (0);
          }
          break;
       case MapRequest:
@@ -97,7 +98,8 @@ main ()
    if (!Dpy) return 1;
    Scr = DefaultScreen (Dpy);
    Root = DefaultRootWindow (Dpy);
-         w = DisplayWidth (Dpy, Scr) / 2;
+         s = DisplayWidth (Dpy, Scr);
+         w = s / 2;
          h = DisplayHeight (Dpy, Scr) - barh;
    XSetErrorHandler (xerror);
    listwindow (0);
