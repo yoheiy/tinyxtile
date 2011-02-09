@@ -13,15 +13,17 @@ const int topbar = 1;
 void
 arrange (Window master)
 {
-   int i, b;
+   int i, b, m = n;
    XWindowAttributes wattr;
 
-   for (i = 0; i < n; i++) {
+   if (!master) { master = client[--m]; }
+
+   for (i = 0; i < m; i++) {
       XGetWindowAttributes (Dpy, client[i], &wattr);
       b = wattr.border_width;
       XMoveResizeWindow (Dpy, client[i],
-            w, h - (h + gap) / n * (i + 1) + topbar * barh + gap,
-            s - w - 2 * b, (h + gap) / n - 2 * b - gap);
+            w, h - (h + gap) / m * (i + 1) + topbar * barh + gap,
+            s - w - 2 * b, (h + gap) / m - 2 * b - gap);
    }
    XGetWindowAttributes (Dpy, master, &wattr);
    b = wattr.border_width;
@@ -48,7 +50,6 @@ listwindow (Window master)
    }
    XFree (r_ch);
 
-   if (!master) { master = client[--n]; }
    arrange (master);
 }
 
@@ -72,7 +73,7 @@ mainloop ()
             listwindow (0);
          } else if (e.xconfigurerequest.value_mask & CWWidth) {
             w = e.xconfigurerequest.width;
-	    listwindow (0);
+	    arrange (0);
          }
          break;
       case MapRequest:
