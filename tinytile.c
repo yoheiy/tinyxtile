@@ -10,7 +10,24 @@ const int gap = 1;
 const int barh = 16;
 const int topbar = 1;
 
-void arrange (Window master);
+void
+arrange (Window master)
+{
+   int i, b;
+   XWindowAttributes wattr;
+
+   for (i = 0; i < n; i++) {
+      XGetWindowAttributes (Dpy, client[i], &wattr);
+      b = wattr.border_width;
+      XMoveResizeWindow (Dpy, client[i],
+            w, h - (h + gap) / n * (i + 1) + topbar * barh + gap,
+            s - w - 2 * b, (h + gap) / n - 2 * b - gap);
+   }
+   XGetWindowAttributes (Dpy, master, &wattr);
+   b = wattr.border_width;
+   XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
+         h - 2 * b);
+}
 
 void
 listwindow (Window master)
@@ -33,25 +50,6 @@ listwindow (Window master)
 
    if (!master) { master = client[--n]; }
    arrange (master);
-}
-
-void
-arrange (Window master)
-{
-   int i, b;
-   XWindowAttributes wattr;
-
-   for (i = 0; i < n; i++) {
-      XGetWindowAttributes (Dpy, client[i], &wattr);
-      b = wattr.border_width;
-      XMoveResizeWindow (Dpy, client[i],
-            w, h - (h + gap) / n * (i + 1) + topbar * barh + gap,
-            s - w - 2 * b, (h + gap) / n - 2 * b - gap);
-   }
-   XGetWindowAttributes (Dpy, master, &wattr);
-   b = wattr.border_width;
-   XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
-         h - 2 * b);
 }
 
 void
