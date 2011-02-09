@@ -3,18 +3,20 @@
 Display *Dpy;
 Window   Root, client[256];
 int      Scr;
-unsigned int w, h, s, n;
+int      w, h, s, n;
 
 /* configuration */
 const int gap = 1;
 const int barh = 16;
 const int topbar = 1;
 
+void arrange (Window master);
+
 void
 listwindow (Window master)
 {
    Window r_root, r_parent, *r_ch;
-   int i, b, n_ch;
+   unsigned int n_ch, i;
    XWindowAttributes wattr;
 
    if (!XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch))
@@ -29,6 +31,15 @@ listwindow (Window master)
    XFree (r_ch);
 
    if (!master) { master = client[--n]; }
+   arrange (master);
+}
+
+void
+arrange (Window master)
+{
+   int i, b;
+   XWindowAttributes wattr;
+
    for (i = 0; i < n; i++) {
       XGetWindowAttributes (Dpy, client[i], &wattr);
       b = wattr.border_width;
