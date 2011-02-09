@@ -3,7 +3,7 @@
 Display *Dpy;
 Window   Root, client[256];
 int      Scr;
-int      w, h, s, n;
+int      w, h, s, n, bw[256];
 
 /* configuration */
 const int gap = 1;
@@ -19,8 +19,7 @@ arrange (Window master)
    if (!master) { master = client[--m]; }
 
    for (i = 0; i < m; i++) {
-      XGetWindowAttributes (Dpy, client[i], &wattr);
-      b = wattr.border_width;
+      b = bw[i];
       XMoveResizeWindow (Dpy, client[i],
             w, h - (h + gap) / m * (i + 1) + topbar * barh + gap,
             s - w - 2 * b, (h + gap) / m - 2 * b - gap);
@@ -45,8 +44,10 @@ listwindow (Window master)
    for (i = 0; i < n_ch; i++) {
       XGetWindowAttributes (Dpy, r_ch[i], &wattr);
       if (wattr.map_state == IsViewable &&
-            wattr.override_redirect == False)
-         client[n++] = r_ch[i];
+          wattr.override_redirect == False) {
+         client[n] = r_ch[i];
+         bw[n++] = wattr.border_width;
+      }
    }
    XFree (r_ch);
 
