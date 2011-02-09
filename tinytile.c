@@ -11,12 +11,13 @@ const int barh = 16;
 const int topbar = 1;
 
 void
-arrange (Window master)
+arrange ()
 {
-   int i, b, m = n;
-   XWindowAttributes wattr;
+   Window master;
+   int i, b, m = n - 1;
 
-   if (!master) { master = client[--m]; }
+   if (!n) return;
+   master = client[m];
 
    for (i = 0; i < m; i++) {
       b = bw[i];
@@ -24,8 +25,7 @@ arrange (Window master)
             w, h - (h + gap) / m * (i + 1) + topbar * barh + gap,
             s - w - 2 * b, (h + gap) / m - 2 * b - gap);
    }
-   XGetWindowAttributes (Dpy, master, &wattr);
-   b = wattr.border_width;
+   b = bw[m];
    XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
          h - 2 * b);
 }
@@ -51,7 +51,13 @@ listwindow (Window master)
    }
    XFree (r_ch);
 
-   arrange (master);
+   if (master) {
+      XGetWindowAttributes (Dpy, master, &wattr);
+      client[n] = master;
+      bw[n++] = wattr.border_width;
+   }
+
+   arrange ();
 }
 
 void
