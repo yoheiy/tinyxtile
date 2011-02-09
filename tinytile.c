@@ -1,9 +1,9 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 Display *Dpy;
-Window   Root;
+Window   Root, client[256];
 int      Scr;
-unsigned int w, h, s;
+unsigned int w, h, s, n;
 
 /* configuration */
 const int gap = 1;
@@ -13,31 +13,31 @@ const int topbar = 1;
 void
 listwindow (Window master)
 {
-   Window r_root, r_parent, *r_ch, client[256];
-   int n_ch;
+   Window r_root, r_parent, *r_ch;
+   int i, b, n_ch;
    XWindowAttributes wattr;
 
    if (XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch)) {
-      int i, j = 0, b;
       for (i = 0; i < n_ch; i++) {
          XGetWindowAttributes (Dpy, r_ch[i], &wattr);
          if (wattr.map_state == IsViewable &&
              wattr.override_redirect == False)
-            client[j++] = r_ch[i];
+            client[n++] = r_ch[i];
       }
-      if (!master) { master = client[--j]; }
-      for (i = 0; i < j; i++) {
+      XFree (r_ch);
+
+      if (!master) { master = client[--n]; }
+      for (i = 0; i < n; i++) {
          XGetWindowAttributes (Dpy, client[i], &wattr);
          b = wattr.border_width;
          XMoveResizeWindow (Dpy, client[i],
-               w, h - (h + gap) / j * (i + 1) + topbar * barh + gap,
-               s - w - 2 * b, (h + gap) / j - 2 * b - gap);
+               w, h - (h + gap) / n * (i + 1) + topbar * barh + gap,
+               s - w - 2 * b, (h + gap) / n - 2 * b - gap);
       }
       XGetWindowAttributes (Dpy, master, &wattr);
       b = wattr.border_width;
       XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
                                                         h - 2 * b);
-      XFree (r_ch);
    }
 }
 
