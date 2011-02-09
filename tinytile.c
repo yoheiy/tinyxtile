@@ -31,31 +31,35 @@ arrange ()
 }
 
 void
+newwindow (Window wn)
+{
+   XWindowAttributes wattr;
+
+   XGetWindowAttributes (Dpy, wn, &wattr);
+   if (wattr.map_state == IsViewable &&
+       wattr.override_redirect == False) {
+      client[n] = wn;
+      bw[n++] = wattr.border_width;
+   }
+}
+
+void
 listwindow (Window master)
 {
    Window r_root, r_parent, *r_ch;
    unsigned int n_ch, i;
-   XWindowAttributes wattr;
 
    if (!XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch))
       return;
 
    n = 0;
-   for (i = 0; i < n_ch; i++) {
-      XGetWindowAttributes (Dpy, r_ch[i], &wattr);
-      if (wattr.map_state == IsViewable &&
-          wattr.override_redirect == False) {
-         client[n] = r_ch[i];
-         bw[n++] = wattr.border_width;
-      }
-   }
+   for (i = 0; i < n_ch; i++)
+      newwindow (r_ch[i]);
+
    XFree (r_ch);
 
-   if (master) {
-      XGetWindowAttributes (Dpy, master, &wattr);
-      client[n] = master;
-      bw[n++] = wattr.border_width;
-   }
+   if (master)
+      newwindow (master);
 
    arrange ();
 }
