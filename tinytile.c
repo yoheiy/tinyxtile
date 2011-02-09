@@ -17,28 +17,29 @@ listwindow (Window master)
    int i, b, n_ch;
    XWindowAttributes wattr;
 
-   if (XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch)) {
-      for (i = 0; i < n_ch; i++) {
-         XGetWindowAttributes (Dpy, r_ch[i], &wattr);
-         if (wattr.map_state == IsViewable &&
-             wattr.override_redirect == False)
-            client[n++] = r_ch[i];
-      }
-      XFree (r_ch);
+   if (!XQueryTree (Dpy, Root, &r_root, &r_parent, &r_ch, &n_ch))
+      return;
 
-      if (!master) { master = client[--n]; }
-      for (i = 0; i < n; i++) {
-         XGetWindowAttributes (Dpy, client[i], &wattr);
-         b = wattr.border_width;
-         XMoveResizeWindow (Dpy, client[i],
-               w, h - (h + gap) / n * (i + 1) + topbar * barh + gap,
-               s - w - 2 * b, (h + gap) / n - 2 * b - gap);
-      }
-      XGetWindowAttributes (Dpy, master, &wattr);
-      b = wattr.border_width;
-      XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
-                                                        h - 2 * b);
+   for (i = 0; i < n_ch; i++) {
+      XGetWindowAttributes (Dpy, r_ch[i], &wattr);
+      if (wattr.map_state == IsViewable &&
+            wattr.override_redirect == False)
+         client[n++] = r_ch[i];
    }
+   XFree (r_ch);
+
+   if (!master) { master = client[--n]; }
+   for (i = 0; i < n; i++) {
+      XGetWindowAttributes (Dpy, client[i], &wattr);
+      b = wattr.border_width;
+      XMoveResizeWindow (Dpy, client[i],
+            w, h - (h + gap) / n * (i + 1) + topbar * barh + gap,
+            s - w - 2 * b, (h + gap) / n - 2 * b - gap);
+   }
+   XGetWindowAttributes (Dpy, master, &wattr);
+   b = wattr.border_width;
+   XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
+         h - 2 * b);
 }
 
 void
