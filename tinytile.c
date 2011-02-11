@@ -85,10 +85,9 @@ mainloop ()
          break;
       case MapRequest:
          wn = e.xmaprequest.window;
-         listwindow ();
-         newwindow (wn);
-         arrange ();
          XMapRaised (Dpy, wn);
+         listwindow ();
+         arrange ();
          break;
       case UnmapNotify:
          listwindow ();
