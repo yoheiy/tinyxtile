@@ -78,7 +78,8 @@ mainloop ()
             XRaiseWindow (Dpy, wn);
             listwindow ();
             arrange ();
-         } else if (e.xconfigurerequest.value_mask & CWWidth) {
+         } else if (e.xconfigurerequest.value_mask & CWWidth &&
+                    wn == client[n - 1]) {
             w = e.xconfigurerequest.width;
             arrange ();
          }
