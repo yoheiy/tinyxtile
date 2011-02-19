@@ -22,11 +22,11 @@ arrange ()
    for (i = 0; i < m; i++) {
       b = bw[i];
       XMoveResizeWindow (Dpy, client[i],
-            w, h - (h + gap) / m * (i + 1) + topbar * barh + gap,
-            s - w - 2 * b, (h + gap) / m - 2 * b - gap);
+            w + gap, h - (h + gap) / m * (i + 1) + topbar * barh + gap,
+            s - (w + gap) - 2 * b, (h + gap) / m - 2 * b - gap);
    }
    b = bw[m];
-   XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b - gap,
+   XMoveResizeWindow (Dpy, master, 0, topbar * barh, w - 2 * b,
          h - 2 * b);
 }
 
